@@ -1,0 +1,32 @@
+package shadow.platformer.systems;
+
+import shadow.platformer.components.TransformComponent;
+import shadow.platformer.components.SpriteComponent;
+import shadow.platformer.entities.Entity;
+
+import java.util.List;
+import com.badlogic.gdx.graphics.g2d.Batch;
+
+public class RenderSystem implements System {
+    private final Batch batch;
+
+    public RenderSystem(Batch batch) {
+        this.batch = batch;
+    }
+
+    @Override
+    public void update(float deltaTime, List<Entity> entities) {
+        batch.begin();
+
+        for (Entity e : entities) {
+            if (e.hasComponent(TransformComponent.class) && e.hasComponent(SpriteComponent.class)) {
+                SpriteComponent sprite = e.getComponent(SpriteComponent.class);
+                TransformComponent tx = e.getComponent(TransformComponent.class);
+
+                batch.draw(sprite.texture, tx.x, tx.y, tx.width, tx.height);
+            }
+        }
+
+        batch.end();
+    }
+}
