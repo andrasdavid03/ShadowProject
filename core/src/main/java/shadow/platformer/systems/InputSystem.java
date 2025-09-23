@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import shadow.platformer.components.PlayerControllable;
 import shadow.platformer.components.TransformComponent;
 import shadow.platformer.components.VelocityComponent;
 import shadow.platformer.entities.Entity;
@@ -23,7 +24,7 @@ public class InputSystem implements System {
     @Override
     public void update(float deltaTime, List<Entity> entities) {
         for (Entity e : entities) {
-            if (e.hasComponent(VelocityComponent.class)) {
+            if (e.hasComponent(VelocityComponent.class) && e.hasComponent(PlayerControllable.class)) {
                 VelocityComponent vel = e.getComponent(VelocityComponent.class);
                 vel.vx = 0;
                 vel.vy = 0;

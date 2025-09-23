@@ -40,6 +40,7 @@ public class GameScreen implements Screen {
         player = new Entity();
         player.addComponent(new TransformComponent(100, 100, 64, 64, 0));
         player.addComponent(new VelocityComponent(0, 0));
+        player.addComponent(new PlayerControllable());
         Texture tex = new Texture("sprites/cat.jpg");
         player.addComponent(new SpriteComponent(new TextureRegion(tex)));
         entities.add(player);
