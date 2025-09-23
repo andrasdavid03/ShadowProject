@@ -28,7 +28,7 @@ public class TileRenderSystem implements System {
 
                 for (int y = 0; y < tilemap.height; y++) {
                     for (int x = 0; x < tilemap.width; x++) {
-                        int tileId = tilemap.tiles[y][x];
+                        int tileId = tilemap.tiles[y][x].id;
 
                         if (tileId == 0) continue; // Skip empty tiles
 
