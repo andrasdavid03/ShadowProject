@@ -13,10 +13,9 @@ import shadow.platformer.services.sound.LibGdxSoundService;
 import shadow.platformer.services.sound.SoundService;
 import shadow.platformer.event.*;
 import shadow.platformer.event.eventTypes.SpacePressedEvent;
+import shadow.platformer.factories.PlayerFactory;
 
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 
 import java.util.*;
@@ -37,12 +36,7 @@ public class GameScreen implements Screen {
 
     private void setupWorld() {
         // Create player
-        player = new Entity();
-        player.addComponent(new TransformComponent(100, 100, 64, 64, 0));
-        player.addComponent(new VelocityComponent(0, 0));
-        player.addComponent(new PlayerControllable());
-        Texture tex = new Texture("sprites/cat.jpg");
-        player.addComponent(new SpriteComponent(new TextureRegion(tex)));
+        player = PlayerFactory.createPlayer(100, 100);
         entities.add(player);
 
         // Add systems
