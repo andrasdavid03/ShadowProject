@@ -1,4 +1,4 @@
-package shadow.platformer.ui;
+package shadow.platformer.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
