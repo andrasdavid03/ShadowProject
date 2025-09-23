@@ -1,4 +1,4 @@
-package shadow.platformer.components;
+package shadow.platformer.ecs.components;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 

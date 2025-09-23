@@ -1,4 +1,4 @@
-package shadow.platformer.event;
+package shadow.platformer.events;
 
 import java.util.ArrayList;
 import java.util.List;

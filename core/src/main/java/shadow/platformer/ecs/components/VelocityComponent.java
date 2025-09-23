@@ -1,4 +1,4 @@
-package shadow.platformer.components;
+package shadow.platformer.ecs.components;
 
 public class VelocityComponent {
     public float vx, vy;

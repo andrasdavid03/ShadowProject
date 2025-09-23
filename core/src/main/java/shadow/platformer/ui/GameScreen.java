@@ -4,15 +4,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import shadow.platformer.GameManager;
-
-import shadow.platformer.entities.Entity;
-import shadow.platformer.components.*;
-import shadow.platformer.systems.*;
-import shadow.platformer.systems.System;
+import shadow.platformer.ecs.components.*;
+import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.ecs.systems.*;
+import shadow.platformer.ecs.systems.System;
+import shadow.platformer.events.*;
+import shadow.platformer.events.eventTypes.SpacePressedEvent;
 import shadow.platformer.services.sound.LibGdxSoundService;
 import shadow.platformer.services.sound.SoundService;
-import shadow.platformer.event.*;
-import shadow.platformer.event.eventTypes.SpacePressedEvent;
 import shadow.platformer.factories.PlayerFactory;
 
 import com.badlogic.gdx.graphics.GL20;
@@ -23,7 +22,7 @@ import java.util.*;
 public class GameScreen implements Screen {
     private final GameManager game;
     private final List<Entity> entities = new ArrayList<>();
-    private final List<shadow.platformer.systems.System> systems = new ArrayList<>();
+    private final List<shadow.platformer.ecs.systems.System> systems = new ArrayList<>();
     private final EventBus bus = new EventBus();
     private final SoundService soundService = new LibGdxSoundService();
 

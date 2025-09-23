@@ -1,8 +1,8 @@
-package shadow.platformer.systems;
+package shadow.platformer.ecs.systems;
 
-import shadow.platformer.components.TransformComponent;
-import shadow.platformer.components.SpriteComponent;
-import shadow.platformer.entities.Entity;
+import shadow.platformer.ecs.components.SpriteComponent;
+import shadow.platformer.ecs.components.TransformComponent;
+import shadow.platformer.ecs.entities.Entity;
 
 import java.util.List;
 import com.badlogic.gdx.graphics.g2d.Batch;

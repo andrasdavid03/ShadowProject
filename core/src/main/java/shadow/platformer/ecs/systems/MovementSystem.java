@@ -1,10 +1,10 @@
-package shadow.platformer.systems;
+package shadow.platformer.ecs.systems;
 
 import java.util.List;
 
-import shadow.platformer.components.TransformComponent;
-import shadow.platformer.components.VelocityComponent;
-import shadow.platformer.entities.Entity;
+import shadow.platformer.ecs.components.TransformComponent;
+import shadow.platformer.ecs.components.VelocityComponent;
+import shadow.platformer.ecs.entities.Entity;
 
 public class MovementSystem implements System {
     @Override

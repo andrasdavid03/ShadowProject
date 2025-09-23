@@ -1,7 +1,8 @@
-package shadow.platformer.systems;
+package shadow.platformer.ecs.systems;
 
-import shadow.platformer.entities.Entity;
 import java.util.List;
+
+import shadow.platformer.ecs.entities.Entity;
 
 public interface System {
     void update(float deltaTime, List<Entity> entities);

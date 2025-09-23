@@ -1,4 +1,4 @@
-package shadow.platformer.entities;
+package shadow.platformer.ecs.entities;
 
 import java.util.HashMap;
 import java.util.Map;

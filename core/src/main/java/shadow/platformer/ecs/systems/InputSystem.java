@@ -1,16 +1,16 @@
-package shadow.platformer.systems;
+package shadow.platformer.ecs.systems;
 
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import shadow.platformer.components.PlayerControllable;
-import shadow.platformer.components.TransformComponent;
-import shadow.platformer.components.VelocityComponent;
-import shadow.platformer.entities.Entity;
-import shadow.platformer.event.EventBus;
-import shadow.platformer.event.eventTypes.SpacePressedEvent;
+import shadow.platformer.ecs.components.PlayerControllable;
+import shadow.platformer.ecs.components.TransformComponent;
+import shadow.platformer.ecs.components.VelocityComponent;
+import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.events.EventBus;
+import shadow.platformer.events.eventTypes.SpacePressedEvent;
 
 public class InputSystem implements System {
     private static final float SPEED = 200f;
