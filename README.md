@@ -1,7 +1,7 @@
 # About the project
 
 I started this project with an empty, generated libGDX project, so that I can build the game, as I intend to.
-The model I'm trying to use is ECS (Entity-Component-System) modell, with events, so that I can hopefully make sure, that the code is not a mess.
+The model I'm trying to use is ECS (Entity-Component-System) with events, so that I can hopefully make sure, that the code is not a mess.
 
 # ShadowProject
 
