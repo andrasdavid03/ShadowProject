@@ -7,5 +7,5 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class TileRegistry {
-    
+    // Load and manage tile types and tilemaps
 }

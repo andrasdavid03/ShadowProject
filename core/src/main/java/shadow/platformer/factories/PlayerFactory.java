@@ -12,7 +12,7 @@ import shadow.platformer.ecs.entities.Entity;
 public class PlayerFactory {
     public static Entity createPlayer(float x, float y) {
         Entity player = new Entity();
-        player.addComponent(new TransformComponent(x, y, 64, 64, 0));
+        player.addComponent(new TransformComponent(x, y, 32, 32, 0));
         player.addComponent(new VelocityComponent(0, 0));
         player.addComponent(new PlayerControllable());
         
