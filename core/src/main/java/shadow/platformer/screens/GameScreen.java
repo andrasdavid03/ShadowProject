@@ -54,6 +54,7 @@ public class GameScreen implements Screen {
 
         // Game logic systems
         systems.add(new InputSystem(bus));
+        systems.add(new GravitySystem());
         systems.add(new MovementSystem());
 
         // Rendering systems

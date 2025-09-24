@@ -13,7 +13,7 @@ import shadow.platformer.ecs.entities.Entity;
 
 public class MovementSystem implements System {
     @Override
-    public void update(float delta, List<Entity> entities) {
+    public void update(float deltaTime, List<Entity> entities) {
         for (Entity e : entities) {
             if (!e.hasComponent(TransformComponent.class)
                 || !e.hasComponent(VelocityComponent.class)
@@ -25,8 +25,8 @@ public class MovementSystem implements System {
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
             HitboxComponent ownHitbox = e.getComponent(HitboxComponent.class);
 
-            float moveX = vel.vx * delta;
-            float moveY = vel.vy * delta;
+            float moveX = vel.vx * deltaTime;
+            float moveY = vel.vy * deltaTime;
 
             float newX = pos.x;
             float newY = pos.y;

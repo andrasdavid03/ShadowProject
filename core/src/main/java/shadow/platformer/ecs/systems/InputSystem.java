@@ -31,8 +31,6 @@ public class InputSystem implements System {
                 float inputX = 0f;
                 float inputY = 0f;
 
-                if (Gdx.input.isKeyPressed(Input.Keys.W)) inputY += 1;
-                if (Gdx.input.isKeyPressed(Input.Keys.S)) inputY -= 1;
                 if (Gdx.input.isKeyPressed(Input.Keys.A)) inputX -= 1;
                 if (Gdx.input.isKeyPressed(Input.Keys.D)) inputX += 1;
 
@@ -40,15 +38,15 @@ public class InputSystem implements System {
                 float length = (float) Math.sqrt(inputX * inputX + inputY * inputY);
                 if (length > 0) {
                     inputX /= length;
-                    inputY /= length;
                 }
 
                 // Apply movement speed
                 vel.vx = inputX * stats.maxSpeed;
-                vel.vy = inputY * stats.maxSpeed;
 
                 // Listen for space
                 if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && e.hasComponent(TransformComponent.class)) {
+                    vel.vy += 500f;
+
                     bus.publish(new SpacePressedEvent());
                 }
             }
