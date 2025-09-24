@@ -1,21 +1,21 @@
 package shadow.platformer.ecs.systems;
 
 import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.services.tiles.TileRegistry;
 import shadow.platformer.services.tiles.TileType;
 
 public class TileRenderSystem implements System {
     private final SpriteBatch batch;
-    private final Map<Integer, TileType> tileTypes;
+    private final TileRegistry tileRegistry;
 
-    public TileRenderSystem(SpriteBatch batch, Map<Integer, TileType> tileTypes) {
+    public TileRenderSystem(SpriteBatch batch, TileRegistry tileRegistry) {
         this.batch = batch;
-        this.tileTypes = tileTypes;
+        this.tileRegistry = tileRegistry;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class TileRenderSystem implements System {
 
                         if (tileId == 0) continue; // Skip empty tiles
 
-                        TileType type = tileTypes.get(tileId);
+                        TileType type = tileRegistry.get(tileId);
 
                         batch.draw(type.texture,
                                 x * tilemap.tileSize,

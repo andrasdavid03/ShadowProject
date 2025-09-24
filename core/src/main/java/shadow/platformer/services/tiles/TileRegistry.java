@@ -1,11 +1,21 @@
 package shadow.platformer.services.tiles;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TileRegistry {
-    // Load and manage tile types and tilemaps
+    private final Map<Integer, TileType> tileTypes = new HashMap<>();
+
+    public void register(int id, TileType type) {
+        tileTypes.put(id, type);
+    }
+
+    public TileType get(int id) {
+        return tileTypes.get(id);
+    }
+
+    public Map<Integer, TileType> getAll() {
+        return Collections.unmodifiableMap(tileTypes);
+    }
 }
