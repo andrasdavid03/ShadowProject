@@ -20,10 +20,14 @@ public class PlayerFactory {
 
     public Entity createPlayer(float x, float y) {
         Entity player = new Entity();
-        player.addComponent(new TransformComponent(x, y, 32, 32, 0));
+
+        float width = 16;
+        float height = 16;
+
+        player.addComponent(new TransformComponent(x, y, width, height, 0));
         player.addComponent(new VelocityComponent(0, 0));
         player.addComponent(new MovementStatsComponent(200, 50, 50));
-        player.addComponent(new HitboxComponent(new Rectangle(x, y, 32, 32)));
+        player.addComponent(new HitboxComponent(new Rectangle(x, y, width, height)));
         player.addComponent(new PlayerControllable());
         player.addComponent(new SpriteComponent(playerTexture));
 

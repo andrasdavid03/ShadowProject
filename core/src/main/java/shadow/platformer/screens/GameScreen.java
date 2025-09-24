@@ -66,6 +66,10 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Update camera
+        game.camera.update();
+        game.batch.setProjectionMatrix(game.camera.combined);
+
         // ECS update
         for (System sys : systems) {
             sys.update(delta, entities);

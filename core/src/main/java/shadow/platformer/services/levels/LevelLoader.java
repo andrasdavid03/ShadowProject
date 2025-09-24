@@ -72,7 +72,7 @@ public class LevelLoader {
             }
         }
 
-        TilemapComponent tilemap = new TilemapComponent(tiles[0].length, tiles.length, 8, tiles);
+        TilemapComponent tilemap = new TilemapComponent(tiles[0].length, tiles.length, tileSize, tiles);
 
         Entity level = new Entity();
         level.addComponent(tilemap);
