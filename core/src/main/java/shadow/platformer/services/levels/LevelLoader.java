@@ -1,5 +1,10 @@
 package shadow.platformer.services.levels;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 
 import shadow.platformer.ecs.components.TilemapComponent;
@@ -15,51 +20,33 @@ public class LevelLoader {
         this.tileRegistry = registry;
     }
 
-    public Entity loadLevel(String name) {
+    public Entity loadLevel(String filename) {
+        TiledMap map = new TmxMapLoader().load(filename);
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("level1");
         
-        int[][] layout = {
-            // Top border
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        int width = layer.getWidth();
+        int height = layer.getHeight();
 
-            // Inner rows with some walls
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-
-            // Middle section with some block patterns
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-
-            // Lower section
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-
-            // Bottom rows with full wall
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-
-            // Bottom border
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-        };
-
-        int tileSize = 8;
+        int tileSize = layer.getTileWidth(); // Because its same x same 
         // Create tile matrix from layout
-        Tile[][] tiles = new Tile[layout.length][layout[0].length];
+        Tile[][] tiles = new Tile[height][width];
 
-        for (int y = 0; y < layout.length; y++) {
-            for (int x = 0; x < layout[0].length; x++) {
-                int tileId = layout[y][x];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+
+                int tileId = 0;
+                if (cell != null && cell.getTile() != null) {
+                    tileId = cell.getTile().getId(); // link to TileRegistry
+                    TextureRegion region = cell.getTile().getTextureRegion();
+                    TileType type = new TileType(region, true);
+
+                    if (!tileRegistry.contains(tileId)) {
+                        tileRegistry.register(tileId, type);
+                    }
+                }
+
                 TileType type = tileRegistry.get(tileId);
-
 
                 // Bounds for rendering/positioning
                 Rectangle bounds = null;
@@ -72,7 +59,7 @@ public class LevelLoader {
             }
         }
 
-        TilemapComponent tilemap = new TilemapComponent(tiles[0].length, tiles.length, tileSize, tiles);
+        TilemapComponent tilemap = new TilemapComponent(width, height, tileSize, tiles);
 
         Entity level = new Entity();
         level.addComponent(tilemap);

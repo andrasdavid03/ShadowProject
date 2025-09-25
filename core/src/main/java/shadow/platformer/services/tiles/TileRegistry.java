@@ -11,6 +11,10 @@ public class TileRegistry {
         tileTypes.put(id, type);
     }
 
+    public boolean contains(int id) {
+        return tileTypes.containsKey(id);
+    }
+
     public TileType get(int id) {
         return tileTypes.get(id);
     }
