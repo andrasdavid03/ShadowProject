@@ -12,7 +12,6 @@ import shadow.platformer.services.levels.LevelLoader;
 import shadow.platformer.services.sound.LibGdxSoundService;
 import shadow.platformer.services.sound.SoundService;
 import shadow.platformer.services.tiles.TileRegistry;
-import shadow.platformer.services.tiles.TileType;
 import shadow.platformer.factories.PlayerFactory;
 
 import com.badlogic.gdx.graphics.GL20;
@@ -50,7 +49,7 @@ public class GameScreen implements Screen {
         //tileRegistry.register(1, new TileType(new TextureRegion(dirtTexture), true));
 
         LevelLoader levelLoader = new LevelLoader(tileRegistry);
-        entities.add(levelLoader.loadLevel("levels/level1.tmx"));
+        entities.add(levelLoader.loadLevel("levels/level1.tmx", "level1"));
 
         // Game logic systems
         systems.add(new InputSystem(bus));
