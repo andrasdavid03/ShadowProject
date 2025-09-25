@@ -28,8 +28,6 @@ public class GameScreen implements Screen {
     private final EventBus bus = new EventBus();
     private final SoundService soundService = new LibGdxSoundService();
 
-    private Entity player;
-
     public GameScreen(GameManager game) {
         this.game = game;
         setupWorld();
@@ -40,8 +38,7 @@ public class GameScreen implements Screen {
         TextureRegion playerTexture = new TextureRegion(new Texture("sprites/cat.jpg"));
         PlayerFactory playerFactory = new PlayerFactory(playerTexture);
 
-        player = playerFactory.createPlayer(50, 50);
-        entities.add(player);
+        entities.add(playerFactory.createPlayer(50, 50));
 
         // Load level
         TileRegistry tileRegistry = new TileRegistry();
