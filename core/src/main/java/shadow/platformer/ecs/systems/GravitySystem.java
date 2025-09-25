@@ -8,7 +8,7 @@ import shadow.platformer.ecs.entities.Entity;
 
 public class GravitySystem implements System{
     @Override
-    public void update(float deltaTime, List<Entity> entities) {
+    public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
             if (!e.hasComponent(VelocityComponent.class) || !e.hasComponent(GravityComponent.class))
                 continue;
@@ -16,7 +16,7 @@ public class GravitySystem implements System{
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
             GravityComponent grav = e.getComponent(GravityComponent.class);
 
-            vel.vy -= grav.gravity * deltaTime;
+            vel.vy -= grav.gravity * delta;
 
             // Clamp to terminal velocity
             if (vel.vy < -grav.terminalVelocity) vel.vy = -grav.terminalVelocity;

@@ -3,7 +3,6 @@ package shadow.platformer.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import shadow.platformer.GameManager;
-import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.entities.Entity;
 import shadow.platformer.ecs.systems.*;
 import shadow.platformer.ecs.systems.System;
@@ -54,6 +53,9 @@ public class GameScreen implements Screen {
         LevelLoader levelLoader = new LevelLoader(tileRegistry);
         entities.add(levelLoader.loadLevel("levels/level1.tmx", "level1"));
 
+        // Camera system
+        systems.add(new CameraFollowSystem(game.cameraController));
+
         // Game logic systems
         systems.add(new InputSystem(bus));
         systems.add(new GravitySystem());
@@ -73,17 +75,13 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Update camera
-        TransformComponent t = player.getComponent(TransformComponent.class);
-        game.cameraController.update(delta, t.x, t.y);
-        game.batch.setProjectionMatrix(game.camera.combined);
-
         // ECS update
         for (System sys : systems) {
             sys.update(delta, entities);
         }
 
-        // Input handling
+        // Apply camera projection
+        game.batch.setProjectionMatrix(game.camera.combined);
     }
 
     @Override public void show() {}

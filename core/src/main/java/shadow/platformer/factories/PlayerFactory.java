@@ -3,6 +3,7 @@ package shadow.platformer.factories;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
+import shadow.platformer.ecs.components.CameraFollowComponent;
 import shadow.platformer.ecs.components.GravityComponent;
 import shadow.platformer.ecs.components.HitboxComponent;
 import shadow.platformer.ecs.components.JumpStatsComponent;
@@ -34,6 +35,7 @@ public class PlayerFactory {
         player.addComponent(new HitboxComponent(new Rectangle(x, y, width, height)));
         player.addComponent(new PlayerControllable());
         player.addComponent(new SpriteComponent(playerTexture));
+        player.addComponent(new CameraFollowComponent());
 
         return player;
     }

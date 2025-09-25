@@ -21,7 +21,7 @@ public class InputSystem implements System {
     }
 
     @Override
-    public void update(float deltaTime, List<Entity> entities) {
+    public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
             if (e.hasComponent(VelocityComponent.class) && e.hasComponent(PlayerControllable.class)) {
                 VelocityComponent vel = e.getComponent(VelocityComponent.class);

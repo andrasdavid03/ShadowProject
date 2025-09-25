@@ -19,7 +19,7 @@ public class TileRenderSystem implements System {
     }
 
     @Override
-    public void update(float deltaTime, List<Entity> entities) {
+    public void update(float delta, List<Entity> entities) {
         batch.begin();
 
         for (Entity e : entities) {

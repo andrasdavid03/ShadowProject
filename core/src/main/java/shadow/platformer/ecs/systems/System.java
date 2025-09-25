@@ -5,5 +5,5 @@ import java.util.List;
 import shadow.platformer.ecs.entities.Entity;
 
 public interface System {
-    void update(float deltaTime, List<Entity> entities);
+    void update(float delta, List<Entity> entities);
 }
