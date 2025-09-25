@@ -29,23 +29,23 @@ public class InputSystem implements System {
 
                 // Movement vectors
                 float inputX = 0f;
-                float inputY = 0f;
+                //float inputY = 0f;
 
                 if (Gdx.input.isKeyPressed(Input.Keys.A)) inputX -= 1;
                 if (Gdx.input.isKeyPressed(Input.Keys.D)) inputX += 1;
 
                 // Normalize input vectors
-                float length = (float) Math.sqrt(inputX * inputX + inputY * inputY);
+/*                 float length = (float) Math.sqrt(inputX * inputX + inputY * inputY);
                 if (length > 0) {
                     inputX /= length;
-                }
+                } */
 
                 // Apply movement speed
                 vel.vx = inputX * stats.maxSpeed;
 
                 // Listen for space
-                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && e.hasComponent(TransformComponent.class)) {
-                    vel.vy += 500f;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                    vel.vy += 350f;
 
                     bus.publish(new SpacePressedEvent());
                 }

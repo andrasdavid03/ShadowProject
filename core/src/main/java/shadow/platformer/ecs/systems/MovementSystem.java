@@ -89,6 +89,7 @@ public class MovementSystem implements System {
                             if (moveY > 0) newY = tileBounds.y - ownHitbox.hitbox.height;
                             else if (moveY < 0) newY = tileBounds.y + tileBounds.height;
                             collided = true;
+                            vel.vy = 0; // stop vertical velocity on collision
                             break;
                         }
                     }
