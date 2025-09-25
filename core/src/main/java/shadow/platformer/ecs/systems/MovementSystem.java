@@ -25,7 +25,7 @@ public class MovementSystem implements System {
             TransformComponent pos = e.getComponent(TransformComponent.class);
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
             JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
-            HitboxComponent ownHitbox = e.getComponent(HitboxComponent.class);
+            HitboxComponent hitbox = e.getComponent(HitboxComponent.class);
 
             float moveX = vel.vx * deltaTime;
             float moveY = vel.vy * deltaTime;
@@ -38,77 +38,71 @@ public class MovementSystem implements System {
 
                 TilemapComponent tilemap = other.getComponent(TilemapComponent.class);
 
-                // X axis movement
-                newX += moveX;
-                ownHitbox.hitbox.setPosition(newX, pos.y);
-
-                int startX = (int)(ownHitbox.hitbox.x / tilemap.tileSize);
-                int endX   = (int)((ownHitbox.hitbox.x + ownHitbox.hitbox.width) / tilemap.tileSize);
-                int startY = (int)(ownHitbox.hitbox.y / tilemap.tileSize);
-                int endY   = (int)((ownHitbox.hitbox.y + ownHitbox.hitbox.height) / tilemap.tileSize);
-
-                startX = Math.max(0, startX);
-                endX   = Math.min(tilemap.width - 1, endX);
-                startY = Math.max(0, startY);
-                endY   = Math.min(tilemap.height - 1, endY);
-
-                boolean collided = false;
-                for (int y = startY; y <= endY && !collided; y++) {
-                    for (int x = startX; x <= endX; x++) {
-                        if (tilemap.tiles[y][x].id == 0) continue;
-
-                        Rectangle tileBounds = tilemap.tiles[y][x].bounds;
-                        if (ownHitbox.hitbox.overlaps(tileBounds)) {
-                            if (moveX > 0) newX = tileBounds.x - ownHitbox.hitbox.width;
-                            else if (moveX < 0) newX = tileBounds.x + tileBounds.width;
-                            collided = true;
-                            break;
-                        }
-                    }
-                }
-
-
-                //Y axis movement (Jmp)
-                newY += moveY;
-                ownHitbox.hitbox.setPosition(newX, newY);
-
-                startX = (int)(ownHitbox.hitbox.x / tilemap.tileSize);
-                endX   = (int)((ownHitbox.hitbox.x + ownHitbox.hitbox.width) / tilemap.tileSize);
-                startY = (int)(ownHitbox.hitbox.y / tilemap.tileSize);
-                endY   = (int)((ownHitbox.hitbox.y + ownHitbox.hitbox.height) / tilemap.tileSize);
-
-                startX = Math.max(0, startX);
-                endX   = Math.min(tilemap.width - 1, endX);
-                startY = Math.max(0, startY);
-                endY   = Math.min(tilemap.height - 1, endY);
-
-                collided = false;
-                for (int y = startY; y <= endY && !collided; y++) {
-                    for (int x = startX; x <= endX; x++) {
-                        if (tilemap.tiles[y][x].id == 0) continue;
-
-                        Rectangle tileBounds = tilemap.tiles[y][x].bounds;
-                        if (ownHitbox.hitbox.overlaps(tileBounds)) {
-                            if (moveY > 0) newY = tileBounds.y - ownHitbox.hitbox.height;
-                            else if (moveY < 0) newY = tileBounds.y + tileBounds.height;
-                            collided = true;
-
-                            // Reset jump stats if landing
-                            if (moveY < 0) {
-                                jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps on landing
-                            }
-                            vel.vy = 0; // stop vertical velocity on collision
-                            
-                            break;
-                        }
-                    }
-                }
+                newX = moveAlongX(newX, pos.y, moveX, hitbox, tilemap);
+                newY = moveAlongY(newY, newX, moveY, hitbox, tilemap, vel, jumpStats);
             }
 
-            // finalize position
-            ownHitbox.hitbox.setPosition(newX, newY);
             pos.x = newX;
             pos.y = newY;
         }
+    }
+
+    private float moveAlongX(
+            float newX, float posY, float moveX,
+            HitboxComponent hitbox, TilemapComponent tilemap) {
+
+        newX += moveX;
+        checkCollision(hitbox.hitbox, tilemap, newX, posY, moveX, 0, null, null);
+        return hitbox.hitbox.x; // updated after resolution
+    }
+
+    private float moveAlongY(
+            float newY, float posX, float moveY,
+            HitboxComponent hitbox, TilemapComponent tilemap,
+            VelocityComponent vel, JumpStatsComponent jumpStats) {
+
+        newY += moveY;
+        checkCollision(hitbox.hitbox, tilemap, posX, newY, 0, moveY, vel, jumpStats);
+        return hitbox.hitbox.y;
+    }
+
+    private boolean checkCollision(
+            Rectangle hitbox, TilemapComponent tilemap,
+            float newX, float newY, float moveX, float moveY,
+            VelocityComponent vel, JumpStatsComponent jumpStats) {
+
+        hitbox.setPosition(newX, newY);
+
+        int startX = Math.max(0, (int)(hitbox.x / tilemap.tileSize));
+        int endX   = Math.min(tilemap.width - 1, (int)((hitbox.x + hitbox.width) / tilemap.tileSize));
+        int startY = Math.max(0, (int)(hitbox.y / tilemap.tileSize));
+        int endY   = Math.min(tilemap.height - 1, (int)((hitbox.y + hitbox.height) / tilemap.tileSize));
+
+        for (int y = startY; y <= endY; y++) {
+            for (int x = startX; x <= endX; x++) {
+                if (tilemap.tiles[y][x].id == 0) continue;
+
+                Rectangle tileBounds = tilemap.tiles[y][x].bounds;
+                if (hitbox.overlaps(tileBounds)) {
+                    // X axis resolution
+                    if (moveX > 0) newX = tileBounds.x - hitbox.width;
+                    else if (moveX < 0) newX = tileBounds.x + tileBounds.width;
+
+                    // Y axis resolution
+                    if (moveY > 0) newY = tileBounds.y - hitbox.height;
+                    else if (moveY < 0) {
+                        newY = tileBounds.y + tileBounds.height;
+                        jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps
+                    }
+
+                    // Stop velocity if vertical collision
+                    if (moveY != 0) vel.vy = 0;
+
+                    hitbox.setPosition(newX, newY);
+                    return true; // collided
+                }
+            }
+        }
+        return false;
     }
 }
