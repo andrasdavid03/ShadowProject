@@ -3,6 +3,7 @@ package shadow.platformer.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import shadow.platformer.GameManager;
+import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.entities.Entity;
 import shadow.platformer.ecs.systems.*;
 import shadow.platformer.ecs.systems.System;
@@ -51,7 +52,8 @@ public class GameScreen implements Screen {
         //tileRegistry.register(1, new TileType(new TextureRegion(dirtTexture), true));
 
         LevelLoader levelLoader = new LevelLoader(tileRegistry);
-        entities.add(levelLoader.loadLevel("levels/level1.tmx", "level1"));
+        Entity level = levelLoader.loadLevel("levels/level1.tmx", "level1");
+        entities.add(level);
 
         // Camera system
         systems.add(new CameraFollowSystem(game.cameraController));
@@ -59,7 +61,7 @@ public class GameScreen implements Screen {
         // Game logic systems
         systems.add(new InputSystem(bus));
         systems.add(new GravitySystem());
-        systems.add(new MovementSystem());
+        systems.add(new MovementSystem(level.getComponent(TilemapComponent.class)));
 
         // Rendering systems
         systems.add(new TileRenderSystem(game.batch, tileRegistry));

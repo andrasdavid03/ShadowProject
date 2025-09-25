@@ -11,94 +11,101 @@ import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.components.VelocityComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.services.tiles.Tile;
 
 public class MovementSystem implements System {
+
+    private final TilemapComponent tilemap;   // single reference to level tilemap
+    private final Rectangle tmpHitbox = new Rectangle(); // reusable rectangle for collisions
+
+    public MovementSystem(TilemapComponent tilemap) {
+        this.tilemap = tilemap;
+    }
+
     @Override
     public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
-
             TransformComponent pos = e.getComponent(TransformComponent.class);
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
             JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
             HitboxComponent hitbox = e.getComponent(HitboxComponent.class);
+            PlayerControllable pc = e.getComponent(PlayerControllable.class);
 
-            if (pos != null && vel != null && jumpStats != null && hitbox != null && e.hasComponent(PlayerControllable.class)) {
+            if (pos != null && vel != null && jumpStats != null && hitbox != null && pc != null) {
                 float moveX = vel.vx * delta;
                 float moveY = vel.vy * delta;
 
-                float newX = pos.x;
-                float newY = pos.y;
+                float newX = pos.x + moveX;
+                float newY = pos.y + moveY;
 
-                for (Entity other : entities) {
-                    TilemapComponent tilemap = other.getComponent(TilemapComponent.class);
-                    if (other != e && tilemap != null) {
-                        newX = moveAlongX(newX, pos.y, moveX, hitbox, tilemap);
-                        newY = moveAlongY(newY, newX, moveY, hitbox, tilemap, vel, jumpStats);
-                    }
-                }
+                // Reuse tmpHitbox for collision
+                tmpHitbox.set(hitbox.hitbox);
 
-                pos.x = newX;
-                pos.y = newY;
+                // Move along X axis
+                moveAlongX(newX, pos.y, hitbox, vel);
+
+                // Move along Y axis
+                moveAlongY(pos.x, newY, hitbox, vel, jumpStats);
+
+                // Apply final position
+                pos.x = hitbox.hitbox.x;
+                pos.y = hitbox.hitbox.y;
             }
         }
     }
 
-    private float moveAlongX(
-            float newX, float posY, float moveX,
-            HitboxComponent hitbox, TilemapComponent tilemap) {
+    private void moveAlongX(float newX, float posY, HitboxComponent hitbox, VelocityComponent vel) {
+        tmpHitbox.setPosition(newX, posY);
 
-        newX += moveX;
-        checkCollision(hitbox.hitbox, tilemap, newX, posY, moveX, 0, null, null);
-        return hitbox.hitbox.x; // updated after resolution
-    }
-
-    private float moveAlongY(
-            float newY, float posX, float moveY,
-            HitboxComponent hitbox, TilemapComponent tilemap,
-            VelocityComponent vel, JumpStatsComponent jumpStats) {
-
-        newY += moveY;
-        checkCollision(hitbox.hitbox, tilemap, posX, newY, 0, moveY, vel, jumpStats);
-        return hitbox.hitbox.y;
-    }
-
-    private boolean checkCollision(
-            Rectangle hitbox, TilemapComponent tilemap,
-            float newX, float newY, float moveX, float moveY,
-            VelocityComponent vel, JumpStatsComponent jumpStats) {
-
-        hitbox.setPosition(newX, newY);
-
-        int startX = Math.max(0, (int)(hitbox.x / tilemap.tileSize));
-        int endX   = Math.min(tilemap.width - 1, (int)((hitbox.x + hitbox.width) / tilemap.tileSize));
-        int startY = Math.max(0, (int)(hitbox.y / tilemap.tileSize));
-        int endY   = Math.min(tilemap.height - 1, (int)((hitbox.y + hitbox.height) / tilemap.tileSize));
+        int startX = Math.max(0, (int)(tmpHitbox.x / tilemap.tileSize));
+        int endX = Math.min(tilemap.width - 1, (int)((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize));
+        int startY = Math.max(0, (int)(tmpHitbox.y / tilemap.tileSize));
+        int endY = Math.min(tilemap.height - 1, (int)((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize));
 
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
-                if (tilemap.tiles[y][x].id == 0) continue;
+                Tile tile = tilemap.tiles[y][x];
+                if (tile.id == 0) continue;
 
-                Rectangle tileBounds = tilemap.tiles[y][x].bounds;
-                if (hitbox.overlaps(tileBounds)) {
-                    // X axis resolution
-                    if (moveX > 0) newX = tileBounds.x - hitbox.width;
-                    else if (moveX < 0) newX = tileBounds.x + tileBounds.width;
+                if (tmpHitbox.overlaps(tile.bounds)) {
+                    // Resolve X collision
+                    if (vel.vx > 0) tmpHitbox.x = tile.bounds.x - tmpHitbox.width;
+                    else if (vel.vx < 0) tmpHitbox.x = tile.bounds.x + tile.bounds.width;
 
-                    // Y axis resolution
-                    if (moveY > 0) newY = tileBounds.y - hitbox.height;
-                    else if (moveY < 0) {
-                        newY = tileBounds.y + tileBounds.height;
-                        jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps
-                    }
-
-                    // Stop velocity if vertical collision
-                    if (moveY != 0) vel.vy = 0;
-
-                    hitbox.setPosition(newX, newY);
-                    return true; // collided
+                    vel.vx = 0;
                 }
             }
         }
-        return false;
+
+        hitbox.hitbox.x = tmpHitbox.x; // update hitbox position
+    }
+
+    private void moveAlongY(float posX, float newY, HitboxComponent hitbox, VelocityComponent vel, JumpStatsComponent jumpStats) {
+        tmpHitbox.setPosition(posX, newY);
+
+        int startX = Math.max(0, (int)(tmpHitbox.x / tilemap.tileSize));
+        int endX = Math.min(tilemap.width - 1, (int)((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize));
+        int startY = Math.max(0, (int)(tmpHitbox.y / tilemap.tileSize));
+        int endY = Math.min(tilemap.height - 1, (int)((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize));
+
+        for (int y = startY; y <= endY; y++) {
+            for (int x = startX; x <= endX; x++) {
+                Tile tile = tilemap.tiles[y][x];
+                if (tile.id == 0) continue;
+
+                if (tmpHitbox.overlaps(tile.bounds)) {
+                    // Resolve Y collision
+                    if (vel.vy > 0) tmpHitbox.y = tile.bounds.y - tmpHitbox.height;
+                    else if (vel.vy < 0) {
+                        tmpHitbox.y = tile.bounds.y + tile.bounds.height;
+                        jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps
+                    }
+
+                    vel.vy = 0;
+                }
+            }
+        }
+
+        hitbox.hitbox.y = tmpHitbox.y; // update hitbox position
     }
 }
