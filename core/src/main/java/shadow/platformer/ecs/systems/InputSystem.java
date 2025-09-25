@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import shadow.platformer.ecs.components.JumpStatsComponent;
 import shadow.platformer.ecs.components.MovementStatsComponent;
 import shadow.platformer.ecs.components.PlayerControllable;
 import shadow.platformer.ecs.components.TransformComponent;
@@ -44,8 +45,13 @@ public class InputSystem implements System {
                 vel.vx = inputX * stats.maxSpeed;
 
                 // Listen for space
-                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    vel.vy += 350f;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && e.hasComponent(JumpStatsComponent.class)) {
+                    JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
+                    if (jumpStats.jumpsLeft <= 0) continue; // no jumps left
+
+                    // Apply jump force
+                    jumpStats.jumpsLeft -= 1;
+                    vel.vy = jumpStats.jumpForce;
 
                     bus.publish(new SpacePressedEvent());
                 }

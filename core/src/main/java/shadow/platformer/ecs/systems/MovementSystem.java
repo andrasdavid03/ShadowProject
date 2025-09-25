@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 
 import shadow.platformer.ecs.components.HitboxComponent;
+import shadow.platformer.ecs.components.JumpStatsComponent;
 import shadow.platformer.ecs.components.PlayerControllable;
 import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.components.TransformComponent;
@@ -23,6 +24,7 @@ public class MovementSystem implements System {
 
             TransformComponent pos = e.getComponent(TransformComponent.class);
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
+            JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
             HitboxComponent ownHitbox = e.getComponent(HitboxComponent.class);
 
             float moveX = vel.vx * deltaTime;
@@ -65,7 +67,8 @@ public class MovementSystem implements System {
                     }
                 }
 
-                //Y axis movement
+
+                //Y axis movement (Jmp)
                 newY += moveY;
                 ownHitbox.hitbox.setPosition(newX, newY);
 
@@ -89,7 +92,13 @@ public class MovementSystem implements System {
                             if (moveY > 0) newY = tileBounds.y - ownHitbox.hitbox.height;
                             else if (moveY < 0) newY = tileBounds.y + tileBounds.height;
                             collided = true;
+
+                            // Reset jump stats if landing
+                            if (moveY < 0) {
+                                jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps on landing
+                            }
                             vel.vy = 0; // stop vertical velocity on collision
+                            
                             break;
                         }
                     }
