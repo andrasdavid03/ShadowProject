@@ -5,7 +5,6 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.optionValue_return;
 import shadow.platformer.ecs.components.JumpStatsComponent;
 import shadow.platformer.ecs.components.MovementStatsComponent;
 import shadow.platformer.ecs.components.PlayerControllable;
