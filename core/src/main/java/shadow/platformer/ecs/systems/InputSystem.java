@@ -5,10 +5,10 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import groovyjarjarantlr4.v4.parse.ANTLRParser.optionValue_return;
 import shadow.platformer.ecs.components.JumpStatsComponent;
 import shadow.platformer.ecs.components.MovementStatsComponent;
 import shadow.platformer.ecs.components.PlayerControllable;
-import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.components.VelocityComponent;
 import shadow.platformer.ecs.entities.Entity;
 import shadow.platformer.events.EventBus;
@@ -37,16 +37,24 @@ public class InputSystem implements System {
                 // Apply movement speed
                 vel.vx = inputX * stats.maxSpeed;
 
-                // Listen for space
-                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && e.hasComponent(JumpStatsComponent.class)) {
+                // Variable jump height
+                if (e.hasComponent(JumpStatsComponent.class)) {
                     JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
-                    if (jumpStats.jumpsLeft <= 0) continue; // no jumps left
-
-                    // Apply jump force
-                    jumpStats.jumpsLeft -= 1;
-                    vel.vy = jumpStats.jumpForce;
-
-                    bus.publish(new SpacePressedEvent());
+                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                        if (!jumpStats.isJumping && jumpStats.jumpsLeft > 0) {
+                            // Start jump
+                            jumpStats.isJumping = true;
+                            jumpStats.jumpsLeft -= 1;
+                            vel.vy = jumpStats.jumpForce;
+                            bus.publish(new SpacePressedEvent());
+                        }
+                    } else {
+                        // Release jump but have a minimum height
+                        if (jumpStats.isJumping && vel.vy > 0) {
+                            vel.vy *= 0.5; // Cut jump height
+                        }
+                        jumpStats.isJumping = false;
+                    }
                 }
             }
         }
