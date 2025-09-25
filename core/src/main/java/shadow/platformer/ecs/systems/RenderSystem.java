@@ -19,10 +19,10 @@ public class RenderSystem implements System {
         batch.begin();
 
         for (Entity e : entities) {
-            if (e.hasComponent(TransformComponent.class) && e.hasComponent(SpriteComponent.class)) {
-                SpriteComponent sprite = e.getComponent(SpriteComponent.class);
-                TransformComponent tx = e.getComponent(TransformComponent.class);
+            SpriteComponent sprite = e.getComponent(SpriteComponent.class);
+            TransformComponent tx = e.getComponent(TransformComponent.class);
 
+            if (sprite != null && tx != null) {
                 batch.draw(sprite.texture, tx.x, tx.y, tx.width, tx.height);
             }
         }

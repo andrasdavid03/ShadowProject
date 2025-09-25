@@ -23,8 +23,8 @@ public class TileRenderSystem implements System {
         batch.begin();
 
         for (Entity e : entities) {
-            if (e.hasComponent(TilemapComponent.class)) {
-                TilemapComponent tilemap = e.getComponent(TilemapComponent.class);
+            TilemapComponent tilemap = e.getComponent(TilemapComponent.class);
+            if (tilemap != null) {
 
                 for (int y = 0; y < tilemap.height; y++) {
                     for (int x = 0; x < tilemap.width; x++) {

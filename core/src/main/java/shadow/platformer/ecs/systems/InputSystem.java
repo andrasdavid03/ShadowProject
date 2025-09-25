@@ -23,10 +23,10 @@ public class InputSystem implements System {
     @Override
     public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
-            if (e.hasComponent(VelocityComponent.class) && e.hasComponent(PlayerControllable.class)) {
-                VelocityComponent vel = e.getComponent(VelocityComponent.class);
-                MovementStatsComponent stats = e.getComponent(MovementStatsComponent.class);
+            VelocityComponent vel = e.getComponent(VelocityComponent.class);
+            MovementStatsComponent stats = e.getComponent(MovementStatsComponent.class);
 
+            if (vel != null && stats != null && e.hasComponent(PlayerControllable.class)) {
                 // Movement vectors
                 float inputX = 0f;
 
@@ -37,8 +37,8 @@ public class InputSystem implements System {
                 vel.vx = inputX * stats.maxSpeed;
 
                 // Variable jump height
-                if (e.hasComponent(JumpStatsComponent.class)) {
-                    JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
+                JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
+                if (jumpStats != null) {
                     if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                         if (!jumpStats.isJumping && jumpStats.jumpsLeft > 0) {
                             // Start jump

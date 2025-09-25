@@ -16,34 +16,30 @@ public class MovementSystem implements System {
     @Override
     public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
-            if (!e.hasComponent(TransformComponent.class)
-                || !e.hasComponent(VelocityComponent.class)
-                || !e.hasComponent(PlayerControllable.class)
-                || !e.hasComponent(HitboxComponent.class))
-                continue;
 
             TransformComponent pos = e.getComponent(TransformComponent.class);
             VelocityComponent vel = e.getComponent(VelocityComponent.class);
             JumpStatsComponent jumpStats = e.getComponent(JumpStatsComponent.class);
             HitboxComponent hitbox = e.getComponent(HitboxComponent.class);
 
-            float moveX = vel.vx * delta;
-            float moveY = vel.vy * delta;
+            if (pos != null && vel != null && jumpStats != null && hitbox != null && e.hasComponent(PlayerControllable.class)) {
+                float moveX = vel.vx * delta;
+                float moveY = vel.vy * delta;
 
-            float newX = pos.x;
-            float newY = pos.y;
+                float newX = pos.x;
+                float newY = pos.y;
 
-            for (Entity other : entities) {
-                if (other == e || !other.hasComponent(TilemapComponent.class)) continue;
+                for (Entity other : entities) {
+                    TilemapComponent tilemap = other.getComponent(TilemapComponent.class);
+                    if (other != e && tilemap != null) {
+                        newX = moveAlongX(newX, pos.y, moveX, hitbox, tilemap);
+                        newY = moveAlongY(newY, newX, moveY, hitbox, tilemap, vel, jumpStats);
+                    }
+                }
 
-                TilemapComponent tilemap = other.getComponent(TilemapComponent.class);
-
-                newX = moveAlongX(newX, pos.y, moveX, hitbox, tilemap);
-                newY = moveAlongY(newY, newX, moveY, hitbox, tilemap, vel, jumpStats);
+                pos.x = newX;
+                pos.y = newY;
             }
-
-            pos.x = newX;
-            pos.y = newY;
         }
     }
 

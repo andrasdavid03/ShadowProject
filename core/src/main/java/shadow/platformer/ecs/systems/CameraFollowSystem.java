@@ -17,8 +17,9 @@ public class CameraFollowSystem implements System {
     @Override
     public void update(float delta, List<Entity> entities) {
         for (Entity e : entities) {
-            if (e.hasComponent(CameraFollowComponent.class) && e.hasComponent(TransformComponent.class)) {
-                TransformComponent t = e.getComponent(TransformComponent.class);
+            TransformComponent t = e.getComponent(TransformComponent.class);
+            
+            if (t != null && e.hasComponent(CameraFollowComponent.class)) {
                 cameraController.update(delta, t.x, t.y);
             }
         }
