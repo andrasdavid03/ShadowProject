@@ -3,6 +3,7 @@ package shadow.platformer.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import shadow.platformer.GameManager;
+import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.entities.Entity;
 import shadow.platformer.ecs.systems.*;
 import shadow.platformer.ecs.systems.System;
@@ -27,6 +28,8 @@ public class GameScreen implements Screen {
     private final EventBus bus = new EventBus();
     private final SoundService soundService = new LibGdxSoundService();
 
+    private Entity player;
+
     public GameScreen(GameManager game) {
         this.game = game;
         setupWorld();
@@ -37,7 +40,7 @@ public class GameScreen implements Screen {
         TextureRegion playerTexture = new TextureRegion(new Texture("sprites/cat.jpg"));
         PlayerFactory playerFactory = new PlayerFactory(playerTexture);
 
-        Entity player = playerFactory.createPlayer(50, 50);
+        player = playerFactory.createPlayer(50, 50);
         entities.add(player);
 
         // Load level
@@ -71,7 +74,8 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Update camera
-        game.camera.update();
+        TransformComponent t = player.getComponent(TransformComponent.class);
+        game.cameraController.update(delta, t.x, t.y);
         game.batch.setProjectionMatrix(game.camera.combined);
 
         // ECS update

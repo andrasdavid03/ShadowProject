@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import shadow.platformer.screens.MainMenuScreen;
+import shadow.platformer.services.camera.CameraController;
 
 public class GameManager extends Game {
     public static final int VIRTUAL_WIDTH = 320;
@@ -14,6 +15,7 @@ public class GameManager extends Game {
 
     public SpriteBatch batch;
     public OrthographicCamera camera;
+    public CameraController cameraController;
     public Viewport viewport;
 
     @Override
@@ -22,11 +24,14 @@ public class GameManager extends Game {
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
-        // Not sure if this is needed here
-        //viewport.apply();
-        
+
         camera.position.set(160, 90, 0); // center camera
-        camera.update();
+
+        cameraController = new CameraController(camera);
+        cameraController.setDeadZone(48, 32);
+        cameraController.setFollowSpeed(5f);
+        // world bounds will be set later, when level is loaded
+
         setScreen(new MainMenuScreen(this));
     }
 
