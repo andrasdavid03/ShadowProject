@@ -43,11 +43,6 @@ public class GameScreen implements Screen {
         // Load level
         TileRegistry tileRegistry = new TileRegistry();
 
-        //Texture dirtTexture = new Texture("sprites/dirt.png");
-        //dirtTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        
-        //tileRegistry.register(1, new TileType(new TextureRegion(dirtTexture), true));
-
         LevelLoader levelLoader = new LevelLoader(tileRegistry);
         Entity level = levelLoader.loadLevel("levels/level1.tmx", "level1");
         entities.add(level);
