@@ -3,8 +3,8 @@ package shadow.platformer.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import shadow.platformer.GameManager;
-import shadow.platformer.ecs.World;
-import shadow.platformer.ecs.WorldStore;
+import shadow.platformer.ecs.Chapter;
+import shadow.platformer.ecs.ChapterStore;
 import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.entities.Entity;
 import shadow.platformer.ecs.systems.control.InputSystem;
@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
     private final GameManager game;
     private final String levelId;
     
-    private World world;
+    private Chapter chapter;
 
     public GameScreen(GameManager game, String levelId) {
         this.game = game;
@@ -38,13 +38,13 @@ public class GameScreen implements Screen {
 
         ServiceLocator.register(SoundService.class, new LibGdxSoundService());
 
-        this.world = WorldStore.getOrCreate(levelId, this::buildWorld);
+        this.chapter = ChapterStore.getOrCreate(levelId, this::buildChapter);
     }
 
     // Build a fresh world (only called the first time for a level)
-    private World buildWorld() {
-        World w = new World();
-        EventBus bus = w.bus;
+    private Chapter buildChapter() {
+        Chapter chapter = new Chapter();
+        EventBus bus = chapter.bus;
 
         // Services
         TileRegistry tileRegistry = new TileRegistry();
@@ -59,17 +59,17 @@ public class GameScreen implements Screen {
         TextureRegion playerTexture = new TextureRegion(new Texture("sprites/cat.jpg"));
         PlayerFactory playerFactory = new PlayerFactory(playerTexture);
         Entity player = playerFactory.createPlayer(50, 50);
-        w.entities.add(player);
+        chapter.entities.add(player);
 
         // Level entity with tilemap
         // TODO: I have to make it so that I can load different levels here
         Entity level = levelLoader.loadLevel("levels/level1.tmx", levelId);
-        w.entities.add(level);
+        chapter.entities.add(level);
 
         // Logic systems - priority controls order
-        w.addLogicSystem(new InputSystem(bus)); // priority default 0
-        w.addLogicSystem(new GravitySystem()); // later than input
-        w.addLogicSystem(new MovementSystem(level.getComponent(TilemapComponent.class)));
+        chapter.addLogicSystem(new InputSystem(bus)); // priority default 0
+        chapter.addLogicSystem(new GravitySystem()); // later than input
+        chapter.addLogicSystem(new MovementSystem(level.getComponent(TilemapComponent.class)));
 
         // Rendering systems
         var tilemap = level.getComponent(TilemapComponent.class);
@@ -81,16 +81,16 @@ public class GameScreen implements Screen {
         float worldHeight = Math.max(tilemap.tileSize * tilemap.height, 2000f);
         game.cameraController.setWorldBounds(worldWidth, worldHeight);
 
-        w.addRenderSystem(new CameraFollowSystem(game.cameraController));
-        w.addRenderSystem(tileRenderSystem);
-        w.addRenderSystem(new RenderSystem(game.batch));
+        chapter.addRenderSystem(new CameraFollowSystem(game.cameraController));
+        chapter.addRenderSystem(tileRenderSystem);
+        chapter.addRenderSystem(new RenderSystem(game.batch));
 
         // Event-driven sound example
         bus.subscribe(SpacePressedEvent.class, e -> {
             if (soundService != null) soundService.play("notification");
         });
 
-        return w;
+        return chapter;
     }
 
     @Override
@@ -99,17 +99,17 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        world.update(delta);
+        chapter.update(delta);
 
         // Render world (render systems run regardless of paused state so overlays can show)
         game.batch.setProjectionMatrix(game.camera.combined);
-        world.render(delta);
+        chapter.render(delta);
     }
 
     @Override public void show() {}
     @Override public void resize(int w, int h) {}
-    @Override public void pause() { world.setPaused(true); }
-    @Override public void resume() { world.setPaused(false); }
+    @Override public void pause() { chapter.setPaused(true); }
+    @Override public void resume() { chapter.setPaused(false); }
     @Override public void hide() {}
     @Override public void dispose() {}
 }

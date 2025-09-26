@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class World {
+public class Chapter {
     public final List<Entity> entities = new ArrayList<>();
     private final List<System> logicSystems = new ArrayList<>();
     private final List<System> renderSystems = new ArrayList<>();
