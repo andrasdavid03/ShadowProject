@@ -56,8 +56,19 @@ public class GameScreen implements Screen {
         systems.add(new MovementSystem(level.getComponent(TilemapComponent.class)));
 
         // Rendering systems
-        systems.add(new TileRenderSystem(game.batch, tileRegistry));
+        TilemapComponent tilemap = level.getComponent(TilemapComponent.class);
+        int expectedTiles = tilemap.width * tilemap.height;
+        TileRenderSystem tileRenderSystem = new TileRenderSystem(tileRegistry, expectedTiles, game.camera);
+
+        tileRenderSystem.buildCache(tilemap);
+
+        systems.add(tileRenderSystem);
         systems.add(new RenderSystem(game.batch));
+
+        float worldWidth  = tilemap.width  * tilemap.tileSize;
+        float worldHeight = 2000;
+
+        game.cameraController.setWorldBounds(worldWidth, worldHeight);
 
         // Event-driven sound
         bus.subscribe(SpacePressedEvent.class, e -> soundService.play("notification"));
@@ -69,13 +80,12 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        game.batch.setProjectionMatrix(game.camera.combined);
+
         // ECS update
         for (System sys : systems) {
             sys.update(delta, entities);
         }
-
-        // Apply camera projection
-        game.batch.setProjectionMatrix(game.camera.combined);
     }
 
     @Override public void show() {}
