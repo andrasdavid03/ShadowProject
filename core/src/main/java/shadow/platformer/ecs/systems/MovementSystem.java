@@ -15,8 +15,8 @@ import shadow.platformer.services.tiles.Tile;
 
 public class MovementSystem implements System {
 
-    private final TilemapComponent tilemap;   // single reference to level tilemap
-    private final Rectangle tmpHitbox = new Rectangle(); // reusable rectangle for collisions
+    private final TilemapComponent tilemap;
+    private final Rectangle tmpHitbox = new Rectangle();
 
     public MovementSystem(TilemapComponent tilemap) {
         this.tilemap = tilemap;
@@ -32,22 +32,18 @@ public class MovementSystem implements System {
             PlayerControllable pc = e.getComponent(PlayerControllable.class);
 
             if (pos != null && vel != null && jumpStats != null && hitbox != null && pc != null) {
-                float moveX = vel.vx * delta;
-                float moveY = vel.vy * delta;
-
-                float newX = pos.x + moveX;
-                float newY = pos.y + moveY;
+                // Calculate proposed new position
+                float newX = pos.x + vel.vx * delta;
+                float newY = pos.y + vel.vy * delta;
 
                 // Reuse tmpHitbox for collision
                 tmpHitbox.set(hitbox.hitbox);
 
-                // Move along X axis
+                // Move along X and Y separately
                 moveAlongX(newX, pos.y, hitbox, vel);
-
-                // Move along Y axis
                 moveAlongY(pos.x, newY, hitbox, vel, jumpStats);
 
-                // Apply final position
+                // Update entity position from hitbox 
                 pos.x = hitbox.hitbox.x;
                 pos.y = hitbox.hitbox.y;
             }
@@ -57,10 +53,10 @@ public class MovementSystem implements System {
     private void moveAlongX(float newX, float posY, HitboxComponent hitbox, VelocityComponent vel) {
         tmpHitbox.setPosition(newX, posY);
 
-        int startX = Math.max(0, (int)(tmpHitbox.x / tilemap.tileSize));
-        int endX = Math.min(tilemap.width - 1, (int)((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize));
-        int startY = Math.max(0, (int)(tmpHitbox.y / tilemap.tileSize));
-        int endY = Math.min(tilemap.height - 1, (int)((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize));
+        int startX = Math.max(0, (int)Math.floor(tmpHitbox.x / tilemap.tileSize));
+        int endX   = Math.min(tilemap.width - 1, (int)Math.ceil((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize) - 1);
+        int startY = Math.max(0, (int)Math.floor(tmpHitbox.y / tilemap.tileSize));
+        int endY   = Math.min(tilemap.height - 1, (int)Math.ceil((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize) - 1);
 
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
@@ -68,25 +64,24 @@ public class MovementSystem implements System {
                 if (tile.id == 0) continue;
 
                 if (tmpHitbox.overlaps(tile.bounds)) {
-                    // Resolve X collision
                     if (vel.vx > 0) tmpHitbox.x = tile.bounds.x - tmpHitbox.width;
                     else if (vel.vx < 0) tmpHitbox.x = tile.bounds.x + tile.bounds.width;
 
-                    vel.vx = 0;
+                    vel.vx = 0f;
                 }
             }
         }
 
-        hitbox.hitbox.x = tmpHitbox.x; // update hitbox position
+        hitbox.hitbox.x = tmpHitbox.x;
     }
 
     private void moveAlongY(float posX, float newY, HitboxComponent hitbox, VelocityComponent vel, JumpStatsComponent jumpStats) {
         tmpHitbox.setPosition(posX, newY);
 
-        int startX = Math.max(0, (int)(tmpHitbox.x / tilemap.tileSize));
-        int endX = Math.min(tilemap.width - 1, (int)((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize));
-        int startY = Math.max(0, (int)(tmpHitbox.y / tilemap.tileSize));
-        int endY = Math.min(tilemap.height - 1, (int)((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize));
+        int startX = Math.max(0, (int)Math.floor(tmpHitbox.x / tilemap.tileSize));
+        int endX   = Math.min(tilemap.width - 1, (int)Math.ceil((tmpHitbox.x + tmpHitbox.width) / tilemap.tileSize) - 1);
+        int startY = Math.max(0, (int)Math.floor(tmpHitbox.y / tilemap.tileSize));
+        int endY   = Math.min(tilemap.height - 1, (int)Math.ceil((tmpHitbox.y + tmpHitbox.height) / tilemap.tileSize) - 1);
 
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
@@ -94,18 +89,17 @@ public class MovementSystem implements System {
                 if (tile.id == 0) continue;
 
                 if (tmpHitbox.overlaps(tile.bounds)) {
-                    // Resolve Y collision
                     if (vel.vy > 0) tmpHitbox.y = tile.bounds.y - tmpHitbox.height;
                     else if (vel.vy < 0) {
                         tmpHitbox.y = tile.bounds.y + tile.bounds.height;
                         jumpStats.jumpsLeft = jumpStats.maxJumps; // reset jumps
                     }
 
-                    vel.vy = 0;
+                    vel.vy = 0f;
                 }
             }
         }
 
-        hitbox.hitbox.y = tmpHitbox.y; // update hitbox position
+        hitbox.hitbox.y = tmpHitbox.y;
     }
 }

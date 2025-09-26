@@ -47,14 +47,16 @@ public class GameScreen implements Screen {
         Entity level = levelLoader.loadLevel("levels/level1.tmx", "level1");
         entities.add(level);
 
-        // Camera system
-        systems.add(new CameraFollowSystem(game.cameraController));
 
         // Game logic systems
         systems.add(new InputSystem(bus));
         systems.add(new GravitySystem());
         systems.add(new MovementSystem(level.getComponent(TilemapComponent.class)));
 
+
+        // Camera system
+        systems.add(new CameraFollowSystem(game.cameraController));
+        
         // Rendering systems
         TilemapComponent tilemap = level.getComponent(TilemapComponent.class);
         int expectedTiles = tilemap.width * tilemap.height;
