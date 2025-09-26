@@ -1,4 +1,4 @@
-package shadow.platformer.ecs.systems;
+package shadow.platformer.ecs.systems.render;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.ecs.systems.System;
 import shadow.platformer.services.tiles.TileRegistry;
 import shadow.platformer.services.tiles.TileType;
 

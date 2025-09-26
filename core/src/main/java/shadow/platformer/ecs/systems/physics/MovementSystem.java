@@ -1,4 +1,4 @@
-package shadow.platformer.ecs.systems;
+package shadow.platformer.ecs.systems.physics;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import shadow.platformer.ecs.components.TilemapComponent;
 import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.components.VelocityComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.ecs.systems.System;
 import shadow.platformer.services.tiles.Tile;
 
 public class MovementSystem implements System {

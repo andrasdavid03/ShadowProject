@@ -1,4 +1,4 @@
-package shadow.platformer.ecs.systems;
+package shadow.platformer.ecs.systems.control;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import shadow.platformer.ecs.components.MovementStatsComponent;
 import shadow.platformer.ecs.components.PlayerControllable;
 import shadow.platformer.ecs.components.VelocityComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.ecs.systems.System;
 import shadow.platformer.events.EventBus;
 import shadow.platformer.events.eventTypes.SpacePressedEvent;
 

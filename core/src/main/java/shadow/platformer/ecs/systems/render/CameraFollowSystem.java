@@ -1,10 +1,11 @@
-package shadow.platformer.ecs.systems;
+package shadow.platformer.ecs.systems.render;
 
 import java.util.List;
 
 import shadow.platformer.ecs.components.CameraFollowComponent;
 import shadow.platformer.ecs.components.TransformComponent;
 import shadow.platformer.ecs.entities.Entity;
+import shadow.platformer.ecs.systems.System;
 import shadow.platformer.services.camera.CameraController;
 
 public class CameraFollowSystem implements System {
