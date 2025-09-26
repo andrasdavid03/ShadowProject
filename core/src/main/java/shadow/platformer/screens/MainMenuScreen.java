@@ -69,7 +69,8 @@ public class MainMenuScreen implements Screen{
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (options[selectedIndex].equals("Start")) {
-                game.setScreen(new GameScreen(game));
+                // TODO Add level selection later or at least load the correct level
+                game.setScreen(new GameScreen(game, "level1"));
             } else if (options[selectedIndex].equals("Exit")) {
                 Gdx.app.exit();
             }

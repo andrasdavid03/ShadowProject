@@ -22,4 +22,8 @@ public class EventBus {
             }
         }
     }   
+
+    public void clear() {
+        subscribers.clear();
+    }
 }
