@@ -31,8 +31,8 @@ public class GameScreen implements Screen {
     private final List<Entity> entities = new ArrayList<>();
     private final List<System> logicSystems = new ArrayList<>();
     private final List<System> renderSystems = new ArrayList<>();
-    private final EventBus bus = new EventBus();
     private final SoundService soundService = new LibGdxSoundService();
+    private final EventBus bus = new EventBus();
 
     public GameScreen(GameManager game) {
         this.game = game;
@@ -70,9 +70,8 @@ public class GameScreen implements Screen {
         float worldHeight = 2000;
 
         game.cameraController.setWorldBounds(worldWidth, worldHeight);
-        // Camera system
+        
         renderSystems.add(new CameraFollowSystem(game.cameraController));
-
         renderSystems.add(tileRenderSystem);
         renderSystems.add(new RenderSystem(game.batch));
 
