@@ -3,8 +3,8 @@ package shadow.platformer.ecs.components;
 import shadow.platformer.services.tiles.Tile;
 
 public class TilemapComponent {
-    public int width, height;
-    public int tileSize;
+    public int width, height; // in tiles
+    public int tileSize; // in pixels
     public Tile[][] tiles;
 
     public TilemapComponent(int width, int height, int tileSize, Tile[][] tiles) {

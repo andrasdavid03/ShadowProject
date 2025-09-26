@@ -29,7 +29,7 @@ public class PlayerFactory {
 
         player.addComponent(new TransformComponent(x, y, width, height, 0));
         player.addComponent(new VelocityComponent(0, 0));
-        player.addComponent(new MovementStatsComponent(150, 50, 50));
+        player.addComponent(new MovementStatsComponent(100, 50, 50));
         player.addComponent(new JumpStatsComponent(350f, 2));
         player.addComponent(new GravityComponent(1200, 400));
         player.addComponent(new HitboxComponent(new Rectangle(x, y, width, height)));

@@ -19,11 +19,11 @@ public class LevelLoader {
         this.tileRegistry = tileRegistry;
     }
 
-    public Entity loadLevel(String filename, String levelName) {
+    public Entity loadLevel(String filename, String layerName) {
         // Load TMX map
         TiledMap map = new TmxMapLoader().load(filename);
 
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(levelName);
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(layerName);
         int width = layer.getWidth();
         int height = layer.getHeight();
         int tileSize = (int) layer.getTileWidth(); // assume square tiles
